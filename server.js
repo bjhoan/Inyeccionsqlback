@@ -17,8 +17,8 @@ const db = mysql.createConnection({
 // Conectar a la base de datos
 db.connect(err => {
     if (err) {
-    console.error('Error connecting to the database:', err);
-    return;
+        console.error('Error connecting to the database:', err);
+        return;
     }
     console.log('Connected to the database');
 });
@@ -26,20 +26,24 @@ db.connect(err => {
 // Ruta para el login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-  db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, results) => {
-    if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-    }
-    if (results.length > 0) {
-        res.json({ message: 'Login successful' });
-    } else {
-        res.status(401).json({ message: 'Invalid username or password' });
-    }
+
+    // Consulta 
+    const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        if (results.length > 0) {
+            res.json({ message: 'Login successful' });
+        } else {
+            res.status(401).json({ message: 'Invalid username or password' });
+        }
     });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
